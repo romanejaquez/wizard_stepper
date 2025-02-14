@@ -13,20 +13,20 @@ A simple, customizable and easy-to-use wizard stepper widget for Flutter. Guide 
 
 ### Basic Wizard
 
-![Basic Wizard](./screenshots/basicwizard.gif){width=300px}
+![Basic Wizard](./screenshots/basicwizard.gif)
 
 ### Wizard with Icons
 
-![Basic Wizard](./screenshots/wizardwithicons.gif){width=300px}
+![Basic Wizard](./screenshots/wizardwithicons.gif)
 
 ### Wizard with *Animated Icons
 *(requires your own custom animations)
 
-![Basic Wizard](./screenshots/withanimatedicons.gif){width=300px}
+![Basic Wizard](./screenshots/withanimatedicons.gif)
 
 ### Wizard with Custon Buttons
 
-![Basic Wizard](./screenshots/withcustombuttons.gif){width=300px}
+![Basic Wizard](./screenshots/withcustombuttons.gif)
 
 ## Installation
 
