@@ -7,7 +7,8 @@ class WizardWithAnimatedIcons extends StatefulWidget {
   const WizardWithAnimatedIcons({super.key});
 
   @override
-  State<WizardWithAnimatedIcons> createState() => _WizardWithAnimatedIconsState();
+  State<WizardWithAnimatedIcons> createState() =>
+      _WizardWithAnimatedIconsState();
 }
 
 class _WizardWithAnimatedIconsState extends State<WizardWithAnimatedIcons> {
@@ -18,36 +19,34 @@ class _WizardWithAnimatedIconsState extends State<WizardWithAnimatedIcons> {
     super.initState();
 
     controller = WizardStepperController(
-      orientation: WizardStepperOrientation.horizontal,
-      position: WizardStepperPosition.top,
-      showNavigationButtons: true,
-      stepIconSize: 60,
-      dividerRadius: 20,
-      currentStepColor: Color(0xFF481878),
-      completedStepColor: Color(0xFFFF7676),
-      onMovedToLastStep: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => FinalPage())
-        );
-      }
-    );
+        orientation: WizardStepperOrientation.horizontal,
+        position: WizardStepperPosition.top,
+        showNavigationButtons: true,
+        stepIconSize: 60,
+        dividerRadius: 20,
+        currentStepColor: Color(0xFF481878),
+        completedStepColor: Color(0xFFFF7676),
+        onMovedToLastStep: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => FinalPage()));
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(40.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: WizardStepper(
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                  child: WizardStepper(
                 controller: controller,
                 stepWidgets: List.generate(RiveIcons.values.length, (index) {
                   return RiveIconWrapper(
-                    stepStream: controller.stepChanges, 
+                    stepStream: controller.stepChanges,
                     icon: RiveIcons.values[index],
                     index: index,
                   );
@@ -60,59 +59,54 @@ class _WizardWithAnimatedIconsState extends State<WizardWithAnimatedIcons> {
                   OneStep(),
                   OneStep(),
                 ],
-              )
-            ),
-            
-            SizedBox(height: 32),
-
-            ElevatedButton(onPressed: () {
-              controller.resetWizard();
-            }, child: Text('Reset Wizard')),
-          ],
-        ),
-      )
-    );
+              )),
+              SizedBox(height: 32),
+              ElevatedButton(
+                  onPressed: () {
+                    controller.resetWizard();
+                  },
+                  child: Text('Reset Wizard')),
+            ],
+          ),
+        ));
   }
 }
 
 class RiveIconWrapper extends StatelessWidget {
-
   final Stream<WizardStepperEvent> stepStream;
   final RiveIcons icon;
   final int index;
-  const RiveIconWrapper({super.key, required this.stepStream, required this.icon, required this.index });
+  const RiveIconWrapper(
+      {super.key,
+      required this.stepStream,
+      required this.icon,
+      required this.index});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<WizardStepperEvent>(
-      stream: stepStream,
-      builder: (context, snapshot) {
+        stream: stepStream,
+        builder: (context, snapshot) {
+          RiveIconActions action = RiveIconActions.idle;
 
-        RiveIconActions action = RiveIconActions.idle;
+          if (snapshot.hasData) {
+            final riveData = snapshot.data!.steps[index];
+            action = getActionFromMetadata(riveData);
+          }
 
-        if (snapshot.hasData) {
-          final riveData = snapshot.data!.steps[index];
-          action = getActionFromMetadata(riveData);
-        }
-
-        return RiveIcon(
-          icon: icon, 
-          action: action,
-        );
-      }
-    );
+          return RiveIcon(
+            icon: icon,
+            action: action,
+          );
+        });
   }
 
   RiveIconActions getActionFromMetadata(WizardStepperMetadata metadata) {
     if (metadata.isCurrentStep && !metadata.isComplete) {
       return RiveIconActions.current;
-    }
-    
-    else if (!metadata.isCurrentStep && metadata.isComplete) {
+    } else if (!metadata.isCurrentStep && metadata.isComplete) {
       return RiveIconActions.completed;
-    }
-
-    else if (metadata.isCurrentStep && metadata.isComplete) {
+    } else if (metadata.isCurrentStep && metadata.isComplete) {
       return RiveIconActions.completed;
     }
 
@@ -121,18 +115,21 @@ class RiveIconWrapper extends StatelessWidget {
 }
 
 class RiveIcon extends StatefulWidget {
-
   final RiveIcons icon;
   final double size;
   final RiveIconActions action;
-  const RiveIcon({super.key, required this.icon, this.size = 60, this.action = RiveIconActions.idle, });
+  const RiveIcon({
+    super.key,
+    required this.icon,
+    this.size = 60,
+    this.action = RiveIconActions.idle,
+  });
 
   @override
   State<RiveIcon> createState() => _RiveIconState();
 }
 
 class _RiveIconState extends State<RiveIcon> {
-
   late RiveAnimation anim;
   late StateMachineController ctrl;
   bool actionsLoaded = false;
@@ -155,7 +152,7 @@ class _RiveIconState extends State<RiveIcon> {
     ctrl = StateMachineController.fromArtboard(ab, widget.icon.name)!;
     ab.addController(ctrl);
 
-    for(var action in RiveIconActions.values) {
+    for (var action in RiveIconActions.values) {
       iconActions[action] = ctrl.findSMI(action.name) as SMITrigger;
     }
 
@@ -166,7 +163,6 @@ class _RiveIconState extends State<RiveIcon> {
 
   @override
   Widget build(BuildContext context) {
-
     if (actionsLoaded) {
       iconActions[widget.action]!.fire();
     }

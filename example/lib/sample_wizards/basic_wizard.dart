@@ -10,7 +10,6 @@ class BasicWizard extends StatefulWidget {
 }
 
 class BasicWizardState extends State<BasicWizard> {
-
   late WizardStepperController controller;
 
   @override
@@ -18,28 +17,26 @@ class BasicWizardState extends State<BasicWizard> {
     super.initState();
 
     controller = WizardStepperController(
-      orientation: WizardStepperOrientation.vertical,
-      position: WizardStepperPosition.left,
-      showNavigationButtons: true,
-      onMovedToLastStep: () {
-         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => FinalPage())
-        );
-      }
-    );
+        orientation: WizardStepperOrientation.vertical,
+        position: WizardStepperPosition.left,
+        showNavigationButtons: true,
+        onMovedToLastStep: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => FinalPage()));
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(40.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: WizardStepper(
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                  child: WizardStepper(
                 controller: controller,
                 steps: [
                   OneStep(),
@@ -49,17 +46,15 @@ class BasicWizardState extends State<BasicWizard> {
                   OneStep(),
                   OneStep(),
                 ],
-              )
-            ),
-
-            SizedBox(height: 32),
-
-            ElevatedButton(onPressed: () {
-              controller.resetWizard();
-            }, child: Text('Reset Wizard')),
-          ],
-        ),
-      )
-    );
+              )),
+              SizedBox(height: 32),
+              ElevatedButton(
+                  onPressed: () {
+                    controller.resetWizard();
+                  },
+                  child: Text('Reset Wizard')),
+            ],
+          ),
+        ));
   }
 }

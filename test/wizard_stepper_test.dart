@@ -12,7 +12,6 @@ class MockWizardStep extends StatelessWidget with WizardStep {
   }
 }
 
-
 void main() {
   group('WizardStepperController Tests', () {
     late WizardStepperController controller;
@@ -47,7 +46,6 @@ void main() {
       expect(controller.stepWidgets, widgets);
     });
 
-
     test('Initial state', () {
       controller.initialize(steps);
       expect(controller.isFirstStep(), true);
@@ -65,7 +63,6 @@ void main() {
       expect(controller.isFirstStep(), false);
       expect(controller.isLastStep(), false);
     });
-
 
     test('Move to previous step', () {
       controller.initialize(steps);
@@ -123,7 +120,7 @@ void main() {
       expect(selectedStep, 0);
     });
 
-    test('Stream steps event', () async{
+    test('Stream steps event', () async {
       controller.initialize(steps);
       final event = await controller.stepChanges.first;
       expect(event.steps.length, steps.length);
@@ -132,41 +129,50 @@ void main() {
     test('Switch orientation', () {
       controller.initialize(steps);
       expect(controller.orientation, WizardStepperOrientation.horizontal);
-      expect(() => controller.switchOrientation(WizardStepperOrientation.vertical, WizardStepperPosition.top), throwsException);
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.vertical, WizardStepperPosition.top),
+          throwsException);
       expect(controller.orientation, WizardStepperOrientation.vertical);
-      expect(() => controller.switchOrientation(WizardStepperOrientation.horizontal, WizardStepperPosition.left), throwsException);
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.horizontal, WizardStepperPosition.left),
+          throwsException);
 
-      controller.switchOrientation(WizardStepperOrientation.vertical, WizardStepperPosition.left);
+      controller.switchOrientation(
+          WizardStepperOrientation.vertical, WizardStepperPosition.left);
       expect(controller.orientation, WizardStepperOrientation.vertical);
       expect(controller.position, WizardStepperPosition.left);
     });
 
-     test('Throws exception for invalid horizontal orientation', () {
+    test('Throws exception for invalid horizontal orientation', () {
       controller = WizardStepperController(
-        orientation: WizardStepperOrientation.horizontal,
-        position: WizardStepperPosition.left);
+          orientation: WizardStepperOrientation.horizontal,
+          position: WizardStepperPosition.left);
       expect(() => controller.initialize(steps), throwsException);
     });
 
     test('Throws exception for invalid vertical orientation', () {
       controller = WizardStepperController(
-        orientation: WizardStepperOrientation.vertical,
-        position: WizardStepperPosition.top);
+          orientation: WizardStepperOrientation.vertical,
+          position: WizardStepperPosition.top);
       expect(() => controller.initialize(steps), throwsException);
     });
 
     test('Throws exception for empty steps', () {
-       expect(() => controller.initialize([]), throwsException);
+      expect(() => controller.initialize([]), throwsException);
     });
 
     test('Throws exception for unequal steps and icons', () {
       final icons = [Icons.abc, Icons.ac_unit];
-      expect(() => controller.initialize(steps, wizardStepIcons: icons), throwsException);
+      expect(() => controller.initialize(steps, wizardStepIcons: icons),
+          throwsException);
     });
 
     test('Throws exception for unequal steps and stepWidgets', () {
       final widgets = [Container(), Container()];
-      expect(() => controller.initialize(steps, wizardStepWidgets: widgets), throwsException);
+      expect(() => controller.initialize(steps, wizardStepWidgets: widgets),
+          throwsException);
     });
 
     test('Dispose controller', () {
