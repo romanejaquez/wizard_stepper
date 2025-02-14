@@ -242,3 +242,5 @@ You create an instance of the ```WizardStepperController``` preferably in the ``
 - ***previousButtonStyle***: if ```showNavigationButtons``` is true, set the style for the previous button.
 - ***nextButtonStyle***: if ```showNavigationButtons``` is true, set the style for the next button.
 
+# Bugs or Requests 
+If you encounter any problems feel free to open an [issue](https://github.com/romanejaquez/wizard_stepper/issues/new?template=bug_report.md). If you feel this package is missing a feature, please raise a [ticket](https://github.com/romanejaquez/wizard_stepper/issues/new?template=feature_request.md) on GitHub and I'll look into it. Pull request are also welcome.
