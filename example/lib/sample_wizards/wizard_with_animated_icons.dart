@@ -1,4 +1,4 @@
-import 'package:example/sample_wizards/child_pages.dart';
+import 'package:example/sample_wizards/sample_child_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:wizard_stepper/wizard_stepper.dart';

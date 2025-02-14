@@ -15,16 +15,21 @@ class _OneStepState extends State<OneStep> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('I am step ${widget.stepNumber + 1}', style: Theme.of(context).textTheme.headlineMedium),
-          TextButton(onPressed: () {
-            widget.onCompleteStep(true);
-          }, 
-          child: Text('Press me'))
-        ],
+      child: ValueListenableBuilder<bool>(
+        valueListenable: widget.isCompleteNotifier,
+        builder: (context, isComplete, child) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('I am step ${widget.stepNumber + 1} and I am ${isComplete ? 'complete' : 'incomplete'}', style: Theme.of(context).textTheme.headlineMedium),
+              TextButton(onPressed: () {
+                widget.completeStep(true);
+              }, 
+              child: Text('Press me'))
+            ],
+          );
+        }
       ),
     );
   }
@@ -41,12 +46,12 @@ class SomeStep extends StatelessWidget with WizardStep {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Im another step right here', style: Theme.of(context).textTheme.headlineMedium),
+          Text('I am another step right here', style: Theme.of(context).textTheme.headlineMedium),
           TextButton(onPressed: () {
-            onCompleteStep!(true);
+            completeStep(true);
           }, child: Text('Click me please!')),
           TextButton(onPressed: () {
-            onCompleteStep(false);
+            completeStep(false);
           }, child: Text('disable it!')),
         ],
       ),

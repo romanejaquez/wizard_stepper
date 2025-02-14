@@ -57,7 +57,7 @@ void main() {
 
     test('Move to next step', () {
       controller.initialize(steps);
-      controller.currentStep!.onCompleteStep(true); // Complete the first step
+      controller.currentStep!.completeStep(true); // Complete the first step
       controller.moveToNextStep();
       expect(controller.currentStepIndex, 1);
       expect(controller.currentStep, steps[1]);
@@ -68,7 +68,7 @@ void main() {
 
     test('Move to previous step', () {
       controller.initialize(steps);
-      controller.currentStep!.onCompleteStep(true);
+      controller.currentStep!.completeStep(true);
       controller.moveToNextStep();
       controller.moveToPreviousStep();
       expect(controller.currentStepIndex, 0);
@@ -81,7 +81,7 @@ void main() {
       controller.onMovedToLastStep = () => movedToLastStep = true;
 
       for (var step in steps) {
-        step.onCompleteStep(true);
+        step.completeStep(true);
         if (!controller.isLastStep()) {
           controller.moveToNextStep();
         }
@@ -93,7 +93,7 @@ void main() {
     test('Complete all steps', () {
       controller.initialize(steps);
       for (var step in steps) {
-        step.onCompleteStep(true);
+        step.completeStep(true);
         if (!controller.isLastStep()) {
           controller.moveToNextStep();
         }
@@ -104,7 +104,7 @@ void main() {
 
     test('Reset wizard', () {
       controller.initialize(steps);
-      steps[0].onCompleteStep(true);
+      steps[0].completeStep(true);
       controller.moveToNextStep();
       controller.resetWizard();
       expect(controller.currentStepIndex, 0);
@@ -117,7 +117,7 @@ void main() {
       controller.initialize(steps);
       int selectedStep = -1;
       controller.onSelectedStep = (stepNum) => selectedStep = stepNum;
-      steps[0].onCompleteStep(true);
+      steps[0].completeStep(true);
       controller.onStepSelected(0);
       expect(selectedStep, 0);
     });
@@ -131,8 +131,13 @@ void main() {
     test('Switch orientation', () {
       controller.initialize(steps);
       expect(controller.orientation, WizardStepperOrientation.horizontal);
-      expect(() => controller.switchOrientation(WizardStepperOrientation.vertical), throwsException);
+      expect(() => controller.switchOrientation(WizardStepperOrientation.vertical, WizardStepperPosition.top), throwsException);
       expect(controller.orientation, WizardStepperOrientation.vertical);
+      expect(() => controller.switchOrientation(WizardStepperOrientation.horizontal, WizardStepperPosition.left), throwsException);
+
+      controller.switchOrientation(WizardStepperOrientation.vertical, WizardStepperPosition.left);
+      expect(controller.orientation, WizardStepperOrientation.vertical);
+      expect(controller.position, WizardStepperPosition.left);
     });
 
      test('Throws exception for invalid horizontal orientation', () {
