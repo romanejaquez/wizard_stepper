@@ -109,8 +109,8 @@ class WizardStepperState extends State<WizardStepper> {
 
   // flags to be used when the user selects to 
   // use the default navigation provided by the wizard 
-  bool enablePreviousButton = false;
-  bool enableNextButton = false;
+  bool _enablePreviousButton = false;
+  bool _enableNextButton = false;
 
   @override 
   void initState() {
@@ -128,21 +128,21 @@ class WizardStepperState extends State<WizardStepper> {
   /// based on the index of the current wizard step,
   /// determine what the appropriate color should be applied
   /// for the divider lines in the wizard
-  Color generateLineColor(int index) {
-    return index < controller.steps.length - 1
-                    && controller.steps[index].isComplete 
-                    && controller.steps[index + 1].isCurrentStep 
-                    || index < controller.steps.length - 1 && controller.steps[index].isComplete
-                    && controller.steps[index + 1].isComplete
+  Color _generateLineColor(int index) {
+    return index < controller._steps.length - 1
+                    && controller._steps[index].isComplete 
+                    && controller._steps[index + 1].isCurrentStep 
+                    || index < controller._steps.length - 1 && controller._steps[index].isComplete
+                    && controller._steps[index + 1].isComplete
                         ? controller.completedStepColor : controller.stepColor;
   }
 
   /// based on the index of the current wizard step,
   /// determine what the appropriate color should be applied
   /// for the circle / wizard step indicator in the wizard
-  Color generateCircleColor(int index) {
-    return controller.steps[index].isComplete ? controller.completedStepColor :
-                              (controller.steps[index].isCurrentStep ?
+  Color _generateCircleColor(int index) {
+    return controller._steps[index].isComplete ? controller.completedStepColor :
+                              (controller._steps[index].isCurrentStep ?
                                 controller.currentStepColor : controller.stepColor);
   }
 
@@ -153,8 +153,8 @@ class WizardStepperState extends State<WizardStepper> {
       listenable: controller, 
       builder:(context, child) {
 
-        enablePreviousButton = controller.canMoveToPreviousStep();
-        enableNextButton = controller.canMoveToNextStep() || controller.allStepsCompleted();
+        _enablePreviousButton = controller.canMoveToPreviousStep();
+        _enableNextButton = controller.canMoveToNextStep() || controller.allStepsCompleted();
 
         return Column(
           children: [
@@ -165,22 +165,22 @@ class WizardStepperState extends State<WizardStepper> {
                     Visibility(
                       visible: controller.position == WizardStepperPosition.bottom,
                       child: Expanded(
-                        child: controller.currentStep!
+                        child: controller._currentStep!
                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: List.generate(controller.steps.length, (index) {
+                      children: List.generate(controller._steps.length, (index) {
               
-                        final lineColor = generateLineColor(index);
-                        final circleColor = generateCircleColor(index);
+                        final lineColor = _generateLineColor(index);
+                        final circleColor = _generateCircleColor(index);
               
                           return Expanded(
-                            flex: index < controller.steps.length - 1 ? 1 : 0,
+                            flex: index < controller._steps.length - 1 ? 1 : 0,
                             child: Row(
                               children: [
                                 WizardStepperHotSpot(
-                                  step: controller.steps[index],
+                                  step: controller._steps[index],
                                   color: circleColor,
                                   controller: controller, 
                                   onStepEvent: () {
@@ -188,7 +188,7 @@ class WizardStepperState extends State<WizardStepper> {
                                   },
                                 ),
                                 Visibility(
-                                  visible: index < controller.steps.length - 1,
+                                  visible: index < controller._steps.length - 1,
                                   child: WizardStepperDivider(
                                     color: lineColor,
                                     direction: WizardStepperDividerOrientation.horizontal,
@@ -206,7 +206,7 @@ class WizardStepperState extends State<WizardStepper> {
                     Visibility(
                       visible: controller.position == WizardStepperPosition.top,
                       child: Expanded(
-                        child: controller.currentStep!
+                        child: controller._currentStep!
                       ),
                     )
                   ],
@@ -216,21 +216,21 @@ class WizardStepperState extends State<WizardStepper> {
                     Visibility(
                       visible: controller.position == WizardStepperPosition.right,
                       child: Expanded(
-                        child: controller.currentStep!
+                        child: controller._currentStep!
                       ),
                     ),
                     Column(
-                      children: List.generate(controller.steps.length, (index) {
+                      children: List.generate(controller._steps.length, (index) {
               
-                        final lineColor = generateLineColor(index);
-                        final circleColor = generateCircleColor(index);
+                        final lineColor = _generateLineColor(index);
+                        final circleColor = _generateCircleColor(index);
               
                         return Expanded(
-                          flex: index < controller.steps.length - 1 ? 1 : 0,
+                          flex: index < controller._steps.length - 1 ? 1 : 0,
                           child: Column(
                             children: [
                               WizardStepperHotSpot(
-                                step: controller.steps[index], 
+                                step: controller._steps[index], 
                                 color: circleColor,
                                 controller: controller, 
                                 onStepEvent: () {
@@ -238,7 +238,7 @@ class WizardStepperState extends State<WizardStepper> {
                                 },
                               ),
                               Visibility(
-                                visible: index < controller.steps.length - 1,
+                                visible: index < controller._steps.length - 1,
                                 child: WizardStepperDivider(
                                   color: lineColor,
                                   direction: WizardStepperDividerOrientation.vertical,
@@ -255,7 +255,7 @@ class WizardStepperState extends State<WizardStepper> {
                     Visibility(
                       visible: controller.position == WizardStepperPosition.left,
                       child: Expanded(
-                        child: controller.currentStep!
+                        child: controller._currentStep!
                       )
                     )
                   ],
@@ -271,7 +271,7 @@ class WizardStepperState extends State<WizardStepper> {
                 children: [
                   TextButton(
                     style: controller.previousButtonStyle,
-                    onPressed: enablePreviousButton ? () {
+                    onPressed: _enablePreviousButton ? () {
                       controller.moveToPreviousStep();
                     } : null,
                     child: Text(controller.previousButtonLabel)
@@ -279,7 +279,7 @@ class WizardStepperState extends State<WizardStepper> {
 
                   TextButton(
                     style: controller.nextButtonStyle,
-                    onPressed: enableNextButton ? () {
+                    onPressed: _enableNextButton ? () {
                       if (controller.allStepsCompleted() && controller.isLastStep()) {
                         controller.moveToLastStep();
                       }
@@ -366,7 +366,7 @@ class WizardStepperHotSpot extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Visibility(
-                visible: step.isCurrentStep && controller.stepWidgets.isEmpty,
+                visible: step.isCurrentStep && controller._stepWidgets.isEmpty,
                 child: Container(
                   decoration: BoxDecoration(
                     shape: controller.stepShape,
@@ -380,16 +380,16 @@ class WizardStepperHotSpot extends StatelessWidget {
               ),
 
               // step widgets take the priority
-              controller.stepWidgets.isNotEmpty ?
+              controller._stepWidgets.isNotEmpty ?
                 SizedBox.square(
                   dimension: controller.stepIconSize,
-                  child: controller.stepWidgets[step.stepNumber],
+                  child: controller._stepWidgets[step.stepNumber],
                 ) :
 
               // step icons show if no widgets are provided
-              controller.stepIcons.isNotEmpty ?
+              controller._stepIcons.isNotEmpty ?
                   Icon(
-                    controller.stepIcons[step.stepNumber],
+                    controller._stepIcons[step.stepNumber],
                     size: controller.stepIconSize,
                     color: color,
                   ) :
@@ -405,14 +405,13 @@ class WizardStepperHotSpot extends StatelessWidget {
                 ),
                 child: 
                   // if we want to show the step number inside the step indicator
-                  (controller.showStepNumber && controller.stepIcons.isEmpty ? 
+                  (controller.showStepNumber && controller._stepIcons.isEmpty ? 
                     Container(
-                      
                       alignment: Alignment.center,
                       width: controller.stepSize,
                       height: controller.stepSize,
                       child: Text(
-                        (step.stepNumber + 1).toString(),
+                        '${step.stepNumber + 1}',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12, color: controller.stepNumberColor)
                       ),
@@ -432,11 +431,11 @@ class WizardStepperHotSpot extends StatelessWidget {
 class WizardStepperController extends ChangeNotifier {
 
   // step-related properties
-  WizardStep? currentStep;
-  int currentStepIndex = 0;
-  List<WizardStep> steps = [];
-  List<IconData> stepIcons = [];
-  List<Widget> stepWidgets = [];
+  WizardStep? _currentStep;
+  int _currentStepIndex = 0;
+  List<WizardStep> _steps = [];
+  List<IconData> _stepIcons = [];
+  List<Widget> _stepWidgets = [];
 
   // callbacks
   Function(int, bool)? onStepCompleted;
@@ -486,6 +485,8 @@ class WizardStepperController extends ChangeNotifier {
   late Stream<WizardStepperEvent> stepChanges;
 
   WizardStepperController({
+
+    // callbacks
     this.onStepCompleted,
     this.onSelectedStep,
     this.onMovedToNext,
@@ -494,29 +495,33 @@ class WizardStepperController extends ChangeNotifier {
     this.onMovedToLastStep,
     this.onOrientationSwitched,
 
-    this.stepSize = 20,
+    // position & orientation
     this.orientation = WizardStepperOrientation.horizontal,
     this.position = WizardStepperPosition.top,
 
+    // colors
     this.completedStepColor = Colors.green,
     this.currentStepColor = Colors.blue,
     this.stepColor = Colors.grey,
     this.stepNumberColor = Colors.white,
     this.dividerColor = Colors.grey,
 
+    // values
+    this.stepSize = 20,
     this.dividerThickness = 6,
     this.dividerMargin = 6,
     this.dividerRadius = 0,
-    
     this.borderSize = 5,
     this.stepBackgroundSize = 36,
     this.stepShape = BoxShape.circle,
     this.stepIconSize = 20,
+    this.stepBorderRadius = 20,
 
+    // flags
     this.showStepDividers = true,
     this.showStepNumber = true,
 
-    // buttons
+    // button-related properties
     this.showNavigationButtons = false,
     this.previousButtonLabel = 'Previous',
     this.nextButtonLabel = 'Next',
@@ -524,62 +529,25 @@ class WizardStepperController extends ChangeNotifier {
     this.previousButtonStyle,
     this.nextButtonStyle,
     
-    this.stepBorderRadius = 20,
   }) {
     stepChangesController = StreamController<WizardStepperEvent>.broadcast();
     stepChanges = stepChangesController.stream;
   }
 
-  /// Bootstraps the wizard and sets up its internals
-  /// wizardSteps: the steps to be displayed in the wizard
-  /// wizardStepIcons: (optional) the icons to display instead of the default wizard steps indicators
-  /// wizardStepWidgets: (optional) the widgets to display instead of icons or wizard step indicators
-  void initialize(List<WizardStep> wizardSteps, { 
-    List<IconData> wizardStepIcons = const [], List<Widget> wizardStepWidgets = const [] }) {
-
-    steps = wizardSteps;
-    currentStepIndex = 0;
-
-    for (var (index, element) in steps.indexed) {
-      element.stepNumber = index;
-
-      // wire up the ability for the user to complete a step
-      // from within by sending the boolean flag whether it is complete or not
-      element.completeStep = (isStepComplete) {
-        int stepNum = currentStep!.stepNumber;
-
-        if (stepNum <= steps.length - 1) {
-          currentStep!.isComplete = isStepComplete;
-        }
-
-        if (onStepCompleted != null) {
-          onStepCompleted!(stepNum, isStepComplete);
-        }
-
-        streamStepsEvent();
-        notifyListeners();
-      };
-    }
-
-    if (wizardStepIcons.isNotEmpty) {
-      stepIcons = wizardStepIcons; 
-    }
-
-    if (wizardStepWidgets.isNotEmpty) {
-      stepWidgets = wizardStepWidgets;
-    }
-
-    performChecks();
-    setCurrentStep();
-
-    Future.delayed(const Duration(seconds: 0),() {
-      streamStepsEvent();
-    });
+  /// Broadcasts the internal state of the wizard to any
+  /// interested listening entity. It broadcasts a WizardStepperEvent
+  /// which contains the state of every single wizard step
+  void _streamStepsEvent() {
+    stepChangesController.add(
+      WizardStepperEvent(
+        steps: _steps.map((s) => WizardStepperMetadata(isComplete: s.isComplete, isCurrentStep: s.isCurrentStep)).toList(),
+      ),
+    );
   }
 
   /// Performs some basic checks to warn the user about the usage of the wizard
   /// by notifying the user in the form of exceptions
-  void performChecks() {
+  void _performChecks() {
     if (orientation == WizardStepperOrientation.horizontal &&
       (position == WizardStepperPosition.left || position == WizardStepperPosition.right)) {
         throw Exception('Error: When WizardStepper orientation is horizontal, position must be top or bottom.');
@@ -590,24 +558,76 @@ class WizardStepperController extends ChangeNotifier {
         throw Exception('Error: When WizardStepper orientation is vertical, position must be left or right.');
       }
 
-    if (steps.isEmpty) {
+    if (_steps.isEmpty) {
       throw Exception('You must add steps for the WidgetStepper to function properly.');
     }
 
-    if (steps.isNotEmpty && stepIcons.isNotEmpty && steps.length != stepIcons.length) {
+    if (_steps.isNotEmpty && _stepIcons.isNotEmpty && _steps.length != _stepIcons.length) {
       throw Exception('You must have the same amount of steps and icons.');
     }
 
-    if (steps.isNotEmpty && stepWidgets.isNotEmpty && steps.length != stepWidgets.length) {
+    if (_steps.isNotEmpty && _stepWidgets.isNotEmpty && _steps.length != _stepWidgets.length) {
       throw Exception('You must have the same amount of steps and step widgets.');
     }
   }
 
   /// Resets all steps and only makes the current step the current one
-  void resetCurrentStep() {
-    for(int i = 0; i < steps.length; i++){
-        steps[i].isCurrentStep = steps[i] == currentStep;
+  void _resetCurrentStep() {
+    for(int i = 0; i < _steps.length; i++){
+        _steps[i].isCurrentStep = _steps[i] == _currentStep;
     }
+  }
+
+  /// Sets the current step to be whatever the current step index is
+  void _setCurrentStep() {
+
+    _currentStep = _steps[_currentStepIndex];
+    _resetCurrentStep();
+
+    _streamStepsEvent();
+    notifyListeners();
+  }
+
+  /// Bootstraps the wizard and sets up its internals
+  /// wizardSteps: the steps to be displayed in the wizard
+  /// wizardStepIcons: (optional) the icons to display instead of the default wizard steps indicators
+  /// wizardStepWidgets: (optional) the widgets to display instead of icons or wizard step indicators
+  void initialize(List<WizardStep> wizardSteps, { 
+    List<IconData> wizardStepIcons = const [], List<Widget> wizardStepWidgets = const [] }) {
+
+    _steps = wizardSteps;
+    _currentStepIndex = 0;
+
+    for (var (index, element) in _steps.indexed) {
+      element.stepNumber = index;
+
+      // wire up the ability for the user to complete a step
+      // from within by sending the boolean flag whether it is complete or not
+      element.completeStep = (isStepComplete) {
+        int stepNum = _currentStep!.stepNumber;
+
+        if (stepNum <= _steps.length - 1) {
+          _currentStep!.isComplete = isStepComplete;
+        }
+
+        if (onStepCompleted != null) {
+          onStepCompleted!(stepNum, isStepComplete);
+        }
+
+        _streamStepsEvent();
+        notifyListeners();
+      };
+    }
+
+    _stepIcons = wizardStepIcons; 
+    _stepWidgets = wizardStepWidgets;
+
+    _performChecks();
+    _setCurrentStep();
+
+    Future.delayed(const Duration(seconds: 0),() {
+      _streamStepsEvent();
+    });
   }
 
   /// Switches orientation of the wizard, provided the orientation of the wizard and position of the wizard steps
@@ -617,7 +637,7 @@ class WizardStepperController extends ChangeNotifier {
     orientation = newOrientation;
     position = newPosition;
 
-    performChecks();
+    _performChecks();
     notifyListeners();
 
     if (onOrientationSwitched != null) {
@@ -627,85 +647,64 @@ class WizardStepperController extends ChangeNotifier {
   
   /// Resets the wizard to its initial (default) state
   void resetWizard() {
-    for(int i = 0; i < steps.length; i++) {
-      var step = steps[i];
+    for(int i = 0; i < _steps.length; i++) {
+      var step = _steps[i];
       step.isCurrentStep = false;
       step.isComplete = false;
     }
 
-    currentStepIndex = 0;
-    setCurrentStep();
+    _currentStepIndex = 0;
+    _setCurrentStep();
 
     if (onWizardReset != null) {
       onWizardReset!();
     }
   }
 
-  /// Sets the current step to be whatever the current step index is
-  void setCurrentStep() {
-
-    currentStep = steps[currentStepIndex];
-    resetCurrentStep();
-
-    streamStepsEvent();
-    notifyListeners();
-  }
-
   /// Selects the index in question, provided that the user taps on
   /// the desired wizard step indicator circle, icon or widget
   /// selectedStepIndex: the index of the selected step
   void onStepSelected(int selectedStepIndex) {
-    WizardStep selectedStep = steps[selectedStepIndex];
+    WizardStep selectedStep = _steps[selectedStepIndex];
 
     if (selectedStep.isComplete) {
-      currentStepIndex = selectedStepIndex;
-      currentStep = selectedStep;
+      _currentStepIndex = selectedStepIndex;
+      _currentStep = selectedStep;
 
-      resetCurrentStep();
+      _resetCurrentStep();
       
       if (onSelectedStep != null) {
-        onSelectedStep!(currentStepIndex);
+        onSelectedStep!(_currentStepIndex);
       }
 
-      streamStepsEvent();
+      _streamStepsEvent();
       notifyListeners();
     }
-  }
-  
-  /// Broadcasts the internal state of the wizard to any
-  /// interested listening entity. It broadcasts a WizardStepperEvent
-  /// which contains the state of every single wizard step
-  void streamStepsEvent() {
-    stepChangesController.add(
-      WizardStepperEvent(
-        steps: steps.map((s) => WizardStepperMetadata(isComplete: s.isComplete, isCurrentStep: s.isCurrentStep)).toList(),
-      ),
-    );
-  }
+  } 
 
   /// Returns whether all steps in the wizard have been completed accordingly
   bool allStepsCompleted() {
-    return steps.isNotEmpty && steps.every((s) => s.isComplete);
+    return _steps.isNotEmpty && _steps.every((s) => s.isComplete);
   }
 
   /// Returns whether the wizard can be moved to the next step
   bool canMoveToNextStep() {
-    return currentStep != null && currentStep!.isComplete && currentStep!.stepNumber < steps.length - 1;
+    return _currentStep != null && _currentStep!.isComplete && _currentStep!.stepNumber < _steps.length - 1;
   }
 
   /// Returns whether the wizard can be moved to the previous step
   bool canMoveToPreviousStep() {
-    return currentStep != null && currentStep!.stepNumber > 0;
+    return _currentStep != null && _currentStep!.stepNumber > 0;
   }
 
   /// Returns whether the wizard is at the first step
   bool isFirstStep() {
-    return currentStep != null && currentStep == steps.first;
+    return _currentStep != null && _currentStep == _steps.first;
   }
 
   /// Returns whether the wizard is at the last step
   bool isLastStep() {
-    return currentStep != null && currentStep == steps.last;
+    return _currentStep != null && _currentStep == _steps.last;
   }
 
   /// Triggers the ability to move to the next step in turn
@@ -713,10 +712,10 @@ class WizardStepperController extends ChangeNotifier {
   void moveToNextStep() {
     
     if (canMoveToNextStep()) {
-      currentStepIndex++;
+      _currentStepIndex++;
     }
 
-    setCurrentStep();
+    _setCurrentStep();
 
     if (onMovedToNext != null) {
       onMovedToNext!();
@@ -727,10 +726,10 @@ class WizardStepperController extends ChangeNotifier {
   /// given the proper conditions
   void moveToPreviousStep() {
     if (canMoveToPreviousStep()) {
-      currentStepIndex--;
+      _currentStepIndex--;
     }
 
-    setCurrentStep();
+    _setCurrentStep();
 
     if (onMovedToPrevious != null) {
       onMovedToPrevious!();
@@ -740,14 +739,44 @@ class WizardStepperController extends ChangeNotifier {
   /// Triggers the ability to move to the very last step so the 
   /// last step can be displayed
   void moveToLastStep() {
-    currentStepIndex = steps.length - 1;
-    setCurrentStep();
+    _currentStepIndex = _steps.length - 1;
+    _setCurrentStep();
 
     if (onMovedToLastStep != null) {
       onMovedToLastStep!();
     }
   }
   
+  /// Returns the current step index
+  int get currentStepIndex {
+    return _currentStepIndex;
+  }
+
+  /// Returns the current wizard step
+  WizardStep? get currentStep {
+    return _currentStep;
+  }
+
+  /// Returns the number of steps in the wizard
+  int get numberOfSteps {
+    return _steps.length;
+  }
+
+  /// Returns all steps in the wizard as a List
+  List<WizardStep> get steps {
+    return _steps;
+  }
+
+  /// Returns all icons used for the wizard step indicators
+  List<IconData> get stepIcons {
+    return _stepIcons;
+  }
+
+  /// Returns all the widgets used as wizard step indicators
+  List<Widget> get stepWidgets {
+    return _stepWidgets;
+  }
+
   /// disposes of any resources
   @override
   void dispose() {

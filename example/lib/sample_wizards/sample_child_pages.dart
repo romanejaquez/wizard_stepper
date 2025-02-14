@@ -2,29 +2,23 @@
 import 'package:wizard_stepper/wizard_stepper.dart';
 import 'package:flutter/material.dart';
 
-class OneStep extends StatefulWidget with WizardStep {
-  
-  OneStep({Key? key}) : super(key: key);
-  @override
-  _OneStepState createState() => _OneStepState();
-}
-
-class _OneStepState extends State<OneStep> {
+class OneStep extends StatelessWidget with WizardStep {
+  OneStep({super.key});
   
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: ValueListenableBuilder<bool>(
-        valueListenable: widget.isCompleteNotifier,
+        valueListenable: isCompleteNotifier,
         builder: (context, isComplete, child) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('I am step ${widget.stepNumber + 1} and I am ${isComplete ? 'complete' : 'incomplete'}', style: Theme.of(context).textTheme.headlineMedium),
+              Text('I am step ${stepNumber + 1} and I am ${isComplete ? 'complete' : 'incomplete'}', style: Theme.of(context).textTheme.headlineMedium),
               TextButton(onPressed: () {
-                widget.completeStep(true);
+                completeStep(true);
               }, 
               child: Text('Press me'))
             ],

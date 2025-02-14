@@ -4,6 +4,7 @@ version: 0.0.1
 homepage: https://github.com/romanejaquez/wizard_stepper
 repository: https://github.com/romanejaquez/wizard_stepper
 license: MIT
+issue_tracker: https://github.com/romanejaquez/wizard_stepper/issues
 
 environment:
   sdk: ^3.6.2

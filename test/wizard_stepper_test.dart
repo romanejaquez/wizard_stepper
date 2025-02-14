@@ -1,10 +1,11 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wizard_stepper/wizard_stepper.dart';
 
 // Mock WizardStep widget
 class MockWizardStep extends StatelessWidget with WizardStep {
+  MockWizardStep({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container();
