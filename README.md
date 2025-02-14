@@ -1,6 +1,6 @@
 # Wizard Stepper
 
-A customizable and easy-to-use wizard stepper widget for Flutter. Guide users through multi-step processes with clear progress indication and control.
+A simple, customizable and easy-to-use wizard stepper widget for Flutter. Guide users through multi-step processes with clear progress indication and control.
 
 ## Features
 
