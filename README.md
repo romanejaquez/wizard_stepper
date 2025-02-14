@@ -11,6 +11,23 @@ A customizable and easy-to-use wizard stepper widget for Flutter. Guide users th
 * Ability to listen for wizard events and the internal state of the wizard
 * Easy integration with your existing Flutter app; any page widget can become a wizard page
 
+### Basic Wizard
+
+![Basic Wizard](./screenshots/basicwizard.gif){width=300px}
+
+### Wizard with Icons
+
+![Basic Wizard](./screenshots/wizardwithicons.gif){width=300px}
+
+### Wizard with *Animated Icons
+*(requires your own custom animations)
+
+![Basic Wizard](./screenshots/withanimatedicons.gif){width=300px}
+
+### Wizard with Custon Buttons
+
+![Basic Wizard](./screenshots/withcustombuttons.gif){width=300px}
+
 ## Installation
 
 1. Add `wizard_stepper` as a dependency in your `pubspec.yaml` file:
@@ -58,7 +75,7 @@ WizardStepper(
 ### WizardStep 
 
 Mixin that is applied to any widget that wants to participate in the Wizard Stepper flow.
-Just add the ```WizardStep``` mixin to your widget.
+All you need to do is add the ```WizardStep``` mixin to your widget, and you're good to go.
 
 > [!NOTE]
 > Caveat: by adding the mixin your widget cannot have a ```const``` constructor so just be aware of that.

@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: BasicWizard()
+    // home: BasicWizard()
     // home: WizardWithIcons(),
-    // home: WizardWithAnimatedIcons(),
-    // home: WizardWithCustomButtons(),
+    home: WizardWithAnimatedIcons(),
+    //home: WizardWithCustomButtons(),
   ));
 }
 
