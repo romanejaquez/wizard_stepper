@@ -902,11 +902,11 @@ class WizardStepperThemeData {
   final Color stepNumberColor;
 
   WizardStepperThemeData({
-    required this.stepColor,
-    required this.dividerColor,
-    required this.completedStepColor,
-    required this.currentStepColor,
-    required this.stepNumberColor,
+    this.completedStepColor = Colors.green,
+    this.currentStepColor = Colors.blue,
+    this.stepColor = Colors.grey,
+    this.stepNumberColor = Colors.white,
+    this.dividerColor = Colors.grey,
   });
 }
 

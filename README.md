@@ -282,8 +282,7 @@ controller = WizardStepperController(
 ```
 
 > [!NOTE]
-> If no theme is provided, a theme will be applied using the default colors defined in the **Colors** section. If a theme is assigned and the platform's theme is switched programmatically, the wizard will rebuild accordingly and display the appropriate theme.
-
+> If no theme is provided, a theme will be applied using the default colors defined in the **Colors** section, or if a theme is created with just a few color values assigned, it will populate the rest of the colors from the default ones. If a theme is assigned and the platform's theme is switched programmatically, the wizard will rebuild accordingly and display the appropriate theme. 
 
 #### Values
 - ***stepSize***: sets the size of the wizard step indicator. Defaults to ```20```.
@@ -292,7 +291,7 @@ controller = WizardStepperController(
 - ***dividerRadius***: sets the border radius of the dividers. Defaults to ```0```.
 - ***borderSize***: sets the border size of the wizard step indicator (not applicable when having widgets as widget steps indicators, only icons and default numbers). Defaults to ```5```;
 - ***stepBackgroundSize***: sets the color of the background of the step (only applicable to the default and icon step indicators). Defaults to ```36```.
-- ***stepShape***: sets the shape of the wizard step indicator. Defaults to ```BoxShapecircle```, but you could use also ```BoxShape.square```.
+- ***stepShape***: sets the shape of the wizard step indicator. Defaults to ```BoxShape.circle```, but you could use also ```BoxShape.square```.
 - ***stepIconSize***: sets the size of the icon  (if ```stepIcons``` are provided). Defaults to ```20```.
 - ***stepBorderRadius***: sets the border radius of the wizard step indicator. Defaults to ```20```.
 
