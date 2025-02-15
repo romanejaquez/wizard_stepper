@@ -220,14 +220,25 @@ You create an instance of the ```WizardStepperController``` preferably in the ``
 - ***onMovedToNext***: Notifies that the wizard has moved to the next step.
 - ***onMovedToPrevious***: Notifies that the wizard has moved to the previous step.
 - ***onWizardReset***: Notifies that the wizard has been reset.
-- ***onMovedToLastStep***: Notifies that the wizard has moved to the last step.
+- ***onMovedToLastStep***: Notifies that the wizard has moved to the last step. You can consider the wizard complete at this stage.
 - ***onOrientationSwitched***: Notifies that the wizard orientation has been switched.
 
+### Event Listener
+- ***stepChanges***: subscribe to this ```Stream``` to obtain events of type ```WizardStepperEvent```. This event contains a property called ```steps```, which contains a ```List<WizardStepperMetadata>```, and each ```WizardStepperMetadata``` represents the state of each step in the wizard, in their displayed order. The ```WizardStepperMetadata``` class contains the following properties:
+  - ***isComplete***: a flag denoting whether the step is complete.
+  - ***isCurrentStep***: a flag denoting whether the step is the current one.
+
+```dart
+
+controller.stepChanges.listen((event) {
+  // read the state of the first step in the wizard
+  print(event.steps[0].isComplete);
+});
+```
 
 #### Position & Orientation
 - ***orientation***: sets the orientation of the wizard steps; it could be one of two values: ```WizardStepperOrientation.horizontal``` or ```WizardStepperOrientation.vertical```. Default is horizontal.
 - ***position***: sets the position of the wizard steps in regards to the orientation; it could be one of four values: ```WizardStepperPosition.top```, ```WizardStepperPosition.bottom``` (for horizontal orientation) or ```WizardStepperPosition.left```, ```WizardStepperPosition.right``` (for vertical orientation). Default is top.
-
 
 #### Colors
 - ***completedStepColor***: sets the color of the completed step. Defaults to ```Colors.green```.
@@ -258,6 +269,33 @@ You create an instance of the ```WizardStepperController``` preferably in the ``
 - ***finalStepButtonLabel***: if ```showNavigationButtons``` is true and in the last step, set the label for the next button. Defaults to ```Complete```.
 - ***previousButtonStyle***: if ```showNavigationButtons``` is true, set the style for the previous button.
 - ***nextButtonStyle***: if ```showNavigationButtons``` is true, set the style for the next button.
+
+### Available helper methods and read-only getters in the WizardStepperController
+
+- ***initialize(wizardSteps, { wizardStepIcons, wizardStepWidgets })***: 
+      initializes the WizardStepper controller provided a list of WizardSteps items. Optional: provide a list of icons or a list of widget as icons.
+
+> [!NOTE]
+> The ```initialize``` method is already being called by the ```WizardStepper``` core widget during bootstrapping, so no need to call this method again, unless strictly necessary. It is best to call ```resetWizard``` to reset the wizard to initial values, but if you want to blow up the internal state and "reset it to factory defaults", then you can call ```initialize```.
+
+- ***switchOrientation(WizardStepperOrientation newOrientation, WizardStepperPosition newPosition)***: switches the orientation of the wizard, provided the new orientation (horizontal or vertical) and the new position (top, bottom, left or right).
+- ***resetWizard**: resets the wizard to its initial state.
+- ***allStepsCompleted***: returns a ```bool``` value whether all steps are completed.
+- ***canMoveToNextStep***: returns a ```bool``` value whether the wizard can move to the next step.
+- ***canMoveToPreviousStep***: returns a ```bool``` value whether the wizard can move to the previous step.
+- ***isFirstStep***: returns a ```bool``` value whether the wizard is in the first step.
+- ***isLastStep***: returns a ```bool``` value whether the wizard is in the last step.
+- ***moveToNextStep***: moves to the next step if allowed by the internal logic of the controller.
+- ***moveToPreviousStep***: moves to the previous step if allowed by the internal logic of the controller.
+- ***moveToLastStep***: moves to the last step if allowed by the internal logic of the controller.
+
+### Read-only getters 
+- ***currentStepIndex***: returns the index of the current step as an ```int```.
+- ***currentStep***: returns the current step as an instance of ```WizardStep```.
+- ***numberOfSteps***: returns the number of steps in the wizard as an ```int```.
+- ***steps***: returns the steps as an ```List<WizardStep>```.
+- ***stepIcons***: returns the step icons as an ```List<IconData>```.
+- ***stepWidgets***: returns the step widgets as an ```List<Widget>```.
 
 # Bugs or Requests 
 If you encounter any problems feel free to open an [issue](https://github.com/romanejaquez/wizard_stepper/issues/new?template=bug_report.md). If you feel this package is missing a feature, please raise a [ticket](https://github.com/romanejaquez/wizard_stepper/issues/new?template=feature_request.md) on GitHub and I'll look into it. Pull request are also welcome.

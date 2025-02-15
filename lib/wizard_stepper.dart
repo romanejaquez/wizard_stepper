@@ -538,10 +538,7 @@ class WizardStepperController extends ChangeNotifier {
     this.finalStepButtonLabel = 'Complete',
     this.previousButtonStyle,
     this.nextButtonStyle,
-  }) {
-    stepChangesController = StreamController<WizardStepperEvent>.broadcast();
-    stepChanges = stepChangesController.stream;
-  }
+  });
 
   /// Broadcasts the internal state of the wizard to any
   /// interested listening entity. It broadcasts a WizardStepperEvent
@@ -616,11 +613,17 @@ class WizardStepperController extends ChangeNotifier {
   void initialize(List<WizardStep> wizardSteps,
       {List<IconData> wizardStepIcons = const [],
       List<Widget> wizardStepWidgets = const []}) {
+    
+    stepChangesController = StreamController<WizardStepperEvent>.broadcast();
+    stepChanges = stepChangesController.stream;
+    
     _steps = wizardSteps;
     _currentStepIndex = 0;
 
     for (var (index, element) in _steps.indexed) {
       element.stepNumber = index;
+      element.isCurrentStep = false;
+      element.isComplete = false;
 
       // wire up the ability for the user to complete a step
       // from within by sending the boolean flag whether it is complete or not
@@ -721,6 +724,11 @@ class WizardStepperController extends ChangeNotifier {
     return _currentStep != null && _currentStep!.stepNumber > 0;
   }
 
+  /// Returns whether the wizard can be moved to the last step
+  bool canMoveToLastStep() {
+    return _currentStep != null && _currentStep!.stepNumber <= _steps.length - 1;
+  }
+
   /// Returns whether the wizard is at the first step
   bool isFirstStep() {
     return _currentStep != null && _currentStep == _steps.first;
@@ -736,12 +744,12 @@ class WizardStepperController extends ChangeNotifier {
   void moveToNextStep() {
     if (canMoveToNextStep()) {
       _currentStepIndex++;
-    }
+    
+      _setCurrentStep();
 
-    _setCurrentStep();
-
-    if (onMovedToNext != null) {
-      onMovedToNext!();
+      if (onMovedToNext != null) {
+        onMovedToNext!();
+      }
     }
   }
 
@@ -750,23 +758,25 @@ class WizardStepperController extends ChangeNotifier {
   void moveToPreviousStep() {
     if (canMoveToPreviousStep()) {
       _currentStepIndex--;
-    }
 
-    _setCurrentStep();
+       _setCurrentStep();
 
-    if (onMovedToPrevious != null) {
-      onMovedToPrevious!();
+      if (onMovedToPrevious != null) {
+        onMovedToPrevious!();
+      }
     }
   }
 
   /// Triggers the ability to move to the very last step so the
   /// last step can be displayed
   void moveToLastStep() {
-    _currentStepIndex = _steps.length - 1;
-    _setCurrentStep();
+    if (canMoveToLastStep()) {
+      _currentStepIndex = _steps.length - 1;
+      _setCurrentStep();
 
-    if (onMovedToLastStep != null) {
-      onMovedToLastStep!();
+      if (onMovedToLastStep != null) {
+        onMovedToLastStep!();
+      }
     }
   }
 
