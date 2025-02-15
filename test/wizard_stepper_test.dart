@@ -12,8 +12,41 @@ class MockWizardStep extends StatelessWidget with WizardStep {
   }
 }
 
+class TestStep extends StatefulWidget with WizardStep {
+  TestStep({super.key});
+
+  @override
+  State<TestStep> createState() => _TestStepState();
+}
+
+class _TestStepState extends State<TestStep>  {
+
+  bool isComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isComplete = false; // Initialize isComplete to false
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          isComplete = !isComplete;
+          widget.isCompleteNotifier.value = isComplete;
+        });
+      },
+      child: const Text('Toggle Completion'),
+    );
+  }
+}
+
 void main() {
-  group('WizardStepperController Tests', () {
+
+  group('WizardStepperController', () {
+
     late WizardStepperController controller;
     late List<WizardStep> steps;
 
@@ -175,11 +208,193 @@ void main() {
           throwsException);
     });
 
-    test('Dispose controller', () {
+    test('Dispose controller', () async {
       controller.initialize(steps);
       expect(controller.stepChangesController.isClosed, false);
+      await Future.delayed(const Duration(milliseconds: 0));
       controller.dispose();
       expect(controller.stepChangesController.isClosed, true);
     });
+
+    test('Initializes correctly', () {
+      final controller = WizardStepperController();
+      expect(controller.currentStepIndex, 0);
+      expect(controller.numberOfSteps, 0);
+    });
+
+    test('switchOrientation throws exception with invalid horizontal position', () {
+      final controller = WizardStepperController(
+          orientation: WizardStepperOrientation.vertical,
+          position: WizardStepperPosition.left);
+
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.horizontal, WizardStepperPosition.left),
+          throwsA(isA<Exception>()));
+
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.horizontal, WizardStepperPosition.right),
+          throwsA(isA<Exception>()));
+    });
+
+    test('switchOrientation throws exception with invalid vertical position', () {
+      final controller = WizardStepperController(
+          orientation: WizardStepperOrientation.horizontal,
+          position: WizardStepperPosition.top);
+
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.vertical, WizardStepperPosition.top),
+          throwsA(isA<Exception>()));
+      expect(
+          () => controller.switchOrientation(
+              WizardStepperOrientation.vertical, WizardStepperPosition.bottom),
+          throwsA(isA<Exception>()));
+    });
+
+    test('Throws exception with steps but no icons/widgets', () {
+      final step1 = TestStep();
+      final step2 = TestStep();
+      expect(
+          () => WizardStepperController().initialize([step1, step2]),
+          returnsNormally);
+    });
+
+    test('Matched steps and icons returns normally', () {
+      final step1 = TestStep();
+
+      expect(
+          () => WizardStepperController().initialize(
+                [step1],
+                wizardStepIcons: [Icons.abc],
+              ),
+          returnsNormally); // Mismatched steps and icons // Mismatched));
+    });
+
+    test('Throws exception with mismatched steps and icons', () {
+      final step1 = TestStep();
+
+      expect(
+          () => WizardStepperController().initialize(
+                [step1],
+                wizardStepIcons: [Icons.abc, Icons.abc],
+              ),
+          throwsA(isA<Exception>())); // Mismatched));
+    });
+
+    test('Matched steps and step widgets', () {
+      final step1 = TestStep();
+
+      expect(
+          () => WizardStepperController().initialize(
+                [step1],
+                wizardStepWidgets: [Container()],
+              ),
+          returnsNormally);
+    });
+
+    test('Throws exception with mismatched steps and step widgets', () {
+      final step1 = TestStep();
+
+      expect(
+          () => WizardStepperController().initialize(
+            [step1],
+            wizardStepWidgets: [Container(), Container()],
+          ),
+          throwsException);
+    });
+
+    test('Can move to next/previous/last step', () {
+      final step1 = TestStep();
+      final step2 = TestStep();
+      final controller = WizardStepperController();
+      controller.initialize([step1, step2]);
+      controller.currentStep!.completeStep(true);
+
+
+      expect(controller.canMoveToNextStep(), true);
+      controller.moveToNextStep();
+      expect(controller.currentStepIndex, 1);
+
+      expect(controller.canMoveToPreviousStep(), true);
+      controller.moveToPreviousStep();
+      expect(controller.currentStepIndex, 0);
+
+
+      controller.currentStep!.completeStep(true);
+      controller.moveToNextStep();
+
+      expect(controller.canMoveToLastStep(), true);
+      expect(controller.isLastStep(), true);
+      controller.moveToLastStep();
+
+      controller.resetWizard();
+      expect(controller.currentStepIndex, 0);
+    });
+
+    test('WizardStepper HotSpot onStepEvent', () {
+      final step1 = TestStep();
+      final step2 = TestStep();
+      final controller = WizardStepperController();
+      controller.initialize([step1, step2]);
+
+      controller.steps.first.completeStep(true); //mark the first step complete
+
+      controller.onStepSelected(0); //this should work as it is now marked complete
+      expect(controller.currentStepIndex, 0);
+
+
+      controller.onStepSelected(1); //this will not work because the second step is not complete
+      expect(controller.currentStepIndex, 0);
+    });
+
+    testWidgets('WizardStep mixin functionality', (WidgetTester tester) async {
+      final testStep = TestStep();
+
+      await tester.pumpWidget(MaterialApp(home: testStep));
+
+      // Initial state
+      expect(testStep.isComplete, false);
+
+      // Tap the button to toggle completion
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      expect(testStep.isComplete, true);
+      expect(testStep.isCompleteNotifier.value, true);
+
+      // Tap again to toggle back
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+      expect(testStep.isComplete, false);
+      expect(testStep.isCompleteNotifier.value, false);
+    });
+    
+    testWidgets('PageView Navigation', (WidgetTester tester) async {
+      final step1 = TestStep();
+      final step2 = TestStep();
+      final controller = WizardStepperController(usePageView: true);
+
+      await tester.pumpWidget(MaterialApp(
+        home: WizardStepper(
+          controller: controller,
+          steps: [step1, step2],
+        ),
+      ));
+
+
+      controller.currentStep!.completeStep(true);
+      controller.moveToNextStep();
+      await tester.pumpAndSettle();
+
+      expect(controller.currentStepIndex, 1);
+
+      controller.moveToPreviousStep();
+      await tester.pumpAndSettle();
+
+      expect(controller.currentStepIndex, 0);
+    });
   });
 }
+
+

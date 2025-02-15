@@ -181,7 +181,7 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.bottom,
-                              child: Expanded(child: controller._currentStep!),
+                              child: WizardStepperViewport(controller: controller),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -225,7 +225,7 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.top,
-                              child: Expanded(child: controller._currentStep!),
+                              child: WizardStepperViewport(controller: controller),
                             )
                           ],
                         )
@@ -234,7 +234,7 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.right,
-                              child: Expanded(child: controller._currentStep!),
+                              child: WizardStepperViewport(controller: controller),
                             ),
                             Column(
                               children: List.generate(controller._steps.length,
@@ -272,9 +272,10 @@ class WizardStepperState extends State<WizardStepper> {
                               }),
                             ),
                             Visibility(
-                                visible: controller.position ==
-                                    WizardStepperPosition.left,
-                                child: Expanded(child: controller._currentStep!))
+                              visible: controller.position ==
+                                  WizardStepperPosition.left,
+                              child: WizardStepperViewport(controller: controller),
+                            )
                           ],
                         )),
       
@@ -462,6 +463,33 @@ class WizardStepperHotSpot extends StatelessWidget {
   }
 }
 
+/// The widget that represents the viewport through which the step is visible.
+class WizardStepperViewport extends StatelessWidget {
+
+  final WizardStepperController controller;
+  const WizardStepperViewport({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: controller.usePageView && controller.pageController != null ?
+
+      PageView.builder(
+        scrollDirection: controller.paginationDirection ?? 
+          (controller.orientation == WizardStepperOrientation.horizontal ? Axis.horizontal : Axis.vertical),
+        physics: NeverScrollableScrollPhysics(),
+        controller: controller.pageController,
+        itemCount: controller.numberOfSteps,
+        itemBuilder:(context, index) {
+          return controller._steps[index];
+        },
+      )
+      :
+      controller._currentStep!,
+    );
+  }
+}
+
 /// The controller that orchestrates the wizard interactions and
 /// the creation of all elements that come together to bring the wizard to life
 class WizardStepperController extends ChangeNotifier {
@@ -471,6 +499,12 @@ class WizardStepperController extends ChangeNotifier {
   List<WizardStep> _steps = [];
   List<IconData> _stepIcons = [];
   List<Widget> _stepWidgets = [];
+
+  // pagination
+  bool usePageView;
+  PageController? pageController;
+  Axis? paginationDirection;
+  Duration pagingDuration;
 
   // callbacks
   Function(int, bool)? onStepCompleted;
@@ -573,6 +607,10 @@ class WizardStepperController extends ChangeNotifier {
     this.finalStepButtonLabel = 'Complete',
     this.previousButtonStyle,
     this.nextButtonStyle,
+
+    this.usePageView = false,
+    this.pagingDuration = const Duration(milliseconds: 350),
+    this.paginationDirection,
   });
 
   /// Broadcasts the internal state of the wizard to any
@@ -648,6 +686,8 @@ class WizardStepperController extends ChangeNotifier {
   void initialize(List<WizardStep> wizardSteps,
       {List<IconData> wizardStepIcons = const [],
       List<Widget> wizardStepWidgets = const []}) {
+
+    // initialize controllers
     stepChangesController = StreamController<WizardStepperEvent>.broadcast();
     stepChanges = stepChangesController.stream;
 
@@ -680,12 +720,20 @@ class WizardStepperController extends ChangeNotifier {
     _stepIcons = wizardStepIcons;
     _stepWidgets = wizardStepWidgets;
 
+    if (usePageView) {
+      _setupPageViewPagination();
+    }
+
     _performChecks();
     _setCurrentStep();
 
     Future.delayed(const Duration(seconds: 0), () {
       _streamStepsEvent();
     });
+  }
+
+  void _setupPageViewPagination() {
+    pageController = PageController(initialPage: _currentStepIndex);
   }
 
   /// Switches orientation of the wizard, provided the orientation of the wizard and position of the wizard steps
@@ -715,6 +763,10 @@ class WizardStepperController extends ChangeNotifier {
     _currentStepIndex = 0;
     _setCurrentStep();
 
+    if (usePageView) {
+      pageController!.animateToPage(0, duration: pagingDuration, curve: Curves.easeInOut);
+    }
+
     if (onWizardReset != null) {
       onWizardReset!();
     }
@@ -731,6 +783,10 @@ class WizardStepperController extends ChangeNotifier {
       _currentStep = selectedStep;
 
       _resetCurrentStep();
+
+      if (usePageView) {
+        pageController!.animateToPage(selectedStepIndex, duration: pagingDuration, curve: Curves.easeInOut);
+      }
 
       if (onSelectedStep != null) {
         onSelectedStep!(_currentStepIndex);
@@ -782,6 +838,10 @@ class WizardStepperController extends ChangeNotifier {
 
       _setCurrentStep();
 
+      if (usePageView) {
+        pageController!.nextPage(duration: pagingDuration, curve: Curves.easeInOut);
+      }
+
       if (onMovedToNext != null) {
         onMovedToNext!();
       }
@@ -795,6 +855,10 @@ class WizardStepperController extends ChangeNotifier {
       _currentStepIndex--;
 
       _setCurrentStep();
+
+      if (usePageView) {
+        pageController!.previousPage(duration: pagingDuration, curve: Curves.easeInOut);
+      }
 
       if (onMovedToPrevious != null) {
         onMovedToPrevious!();
@@ -858,6 +922,10 @@ class WizardStepperController extends ChangeNotifier {
   void dispose() {
     super.dispose();
     stepChangesController.close();
+
+    if (usePageView) {
+      pageController!.dispose();
+    }
   }
 }
 
