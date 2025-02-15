@@ -244,8 +244,46 @@ controller.stepChanges.listen((event) {
 - ***completedStepColor***: sets the color of the completed step. Defaults to ```Colors.green```.
 - ***currentStepColor***: sets the color of the current step. Defaults to ```Colors.blue```.
 - ***stepColor***: sets the color of the uncompleted steps. Defaults to ```Colors.grey```.
-- ***stepNumberColor***: sets the color of the step number. Defaults to ```Colors.white```.
 - ***dividerColor***: sets the color of the step dividers. Defaults to ```Colors.grey```.
+- ***stepNumberColor***: sets the color of the step number. Defaults to ```Colors.white```.
+
+### Styles 
+- ***stepLabelStyle***: sets the style of the wizard step indicator label when ```showStepNumber``` is true. You can use it to set the font family and font size of the step label number. Defaults to ```TextStyle(fontSize: 12)```.
+
+> [!NOTE]
+> The ```stepNumberColor``` overrides any color you set using the ```stepLabelStyle```. Be aware of that.
+
+### Theming
+Of course you can apply theming! Create an instance of ```WizardStepperThemeData``` and assign the corresponding values to it, as such:
+
+```dart
+
+controller = WizardStepperController(
+
+  // set the colors for your light Theme
+  lightTheme: WizardStepperThemeData(
+    completedStepColor: Colors.green,
+    currentStepColor: Colors.blue,
+    stepColor: Colors.grey,
+    stepNumberColor: Colors.white,
+    dividerColor: Colors.grey,
+  ),
+
+  // set the dark theme with your colors
+  darkTheme: WizardStepperThemeData(
+    completedStepColor: Colors.pinkAccent,
+    currentStepColor: Colors.deepPurpleAccent,
+    stepColor: Colors.blueGrey,
+    stepNumberColor: Colors.black,
+    dividerColor: Colors.blueGrey,
+  ),
+)
+
+```
+
+> [!NOTE]
+> If no theme is provided, a theme will be applied using the default colors defined in the **Colors** section. If a theme is assigned and the platform's theme is switched programmatically, the wizard will rebuild accordingly and display the appropriate theme.
+
 
 #### Values
 - ***stepSize***: sets the size of the wizard step indicator. Defaults to ```20```.

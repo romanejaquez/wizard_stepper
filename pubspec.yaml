@@ -1,6 +1,6 @@
 name: wizard_stepper
 description: "A simple, customizable and easy-to-use wizard stepper widget for Flutter. Guide users through multi-step processes with clear progress indication and control."
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/romanejaquez/wizard_stepper
 repository: https://github.com/romanejaquez/wizard_stepper
 license: MIT

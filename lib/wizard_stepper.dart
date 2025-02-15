@@ -123,8 +123,8 @@ class WizardStepperState extends State<WizardStepper> {
             index < controller._steps.length - 1 &&
                 controller._steps[index].isComplete &&
                 controller._steps[index + 1].isComplete
-        ? controller.completedStepColor
-        : controller.stepColor;
+        ? controller.theme!.completedStepColor
+        : controller.theme!.stepColor;
   }
 
   /// based on the index of the current wizard step,
@@ -132,46 +132,121 @@ class WizardStepperState extends State<WizardStepper> {
   /// for the circle / wizard step indicator in the wizard
   Color _generateCircleColor(int index) {
     return controller._steps[index].isComplete
-        ? controller.completedStepColor
+        ? controller.theme!.completedStepColor
         : (controller._steps[index].isCurrentStep
-            ? controller.currentStepColor
-            : controller.stepColor);
+            ? controller.theme!.currentStepColor
+            : controller.theme!.stepColor);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: controller,
-      builder: (context, child) {
-        _enablePreviousButton = controller.canMoveToPreviousStep();
-        _enableNextButton =
-            controller.canMoveToNextStep() || controller.allStepsCompleted();
 
-        return Column(
-          children: [
-            Expanded(
-                child: controller.orientation ==
-                        WizardStepperOrientation.horizontal
-                    ? Column(
-                        children: [
-                          Visibility(
-                            visible: controller.position ==
-                                WizardStepperPosition.bottom,
-                            child: Expanded(child: controller._currentStep!),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: List.generate(controller._steps.length,
-                                (index) {
-                              final lineColor = _generateLineColor(index);
-                              final circleColor = _generateCircleColor(index);
+    final lightTheme = controller.lightTheme ?? WizardStepperThemeData(
+      completedStepColor: controller.completedStepColor,
+      currentStepColor: controller.currentStepColor,
+      stepColor: controller.stepColor,
+      stepNumberColor: controller.stepNumberColor,
+      dividerColor: controller.dividerColor,
+    );
 
-                              return Expanded(
-                                  flex: index < controller._steps.length - 1
-                                      ? 1
-                                      : 0,
-                                  child: Row(
-                                    children: [
+    final darkTheme = controller.darkTheme ?? WizardStepperThemeData(
+      completedStepColor: controller.completedStepColor,
+      currentStepColor: controller.currentStepColor,
+      stepColor: controller.stepColor,
+      stepNumberColor: controller.stepNumberColor,
+      dividerColor: controller.dividerColor,
+    );
+
+    return WizardStepperTheme(
+      light: lightTheme,
+      dark: darkTheme,
+      child: ListenableBuilder(
+        listenable: controller,
+        builder: (context, child) {
+      
+          final theme = WizardStepperTheme.of(context);
+          controller.theme = theme;
+      
+          _enablePreviousButton = controller.canMoveToPreviousStep();
+          _enableNextButton =
+              controller.canMoveToNextStep() || controller.allStepsCompleted();
+      
+          return Column(
+            children: [
+              Expanded(
+                  child: controller.orientation ==
+                          WizardStepperOrientation.horizontal
+                      ? Column(
+                          children: [
+                            Visibility(
+                              visible: controller.position ==
+                                  WizardStepperPosition.bottom,
+                              child: Expanded(child: controller._currentStep!),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: List.generate(controller._steps.length,
+                                  (index) {
+                                final lineColor = _generateLineColor(index);
+                                final circleColor = _generateCircleColor(index);
+      
+                                return Expanded(
+                                    flex: index < controller._steps.length - 1
+                                        ? 1
+                                        : 0,
+                                    child: Row(
+                                      children: [
+                                        WizardStepperHotSpot(
+                                          step: controller._steps[index],
+                                          color: circleColor,
+                                          controller: controller,
+                                          onStepEvent: () {
+                                            controller.onStepSelected(index);
+                                          },
+                                        ),
+                                        Visibility(
+                                          visible: index <
+                                              controller._steps.length - 1,
+                                          child: WizardStepperDivider(
+                                            color: lineColor,
+                                            direction:
+                                                WizardStepperDividerOrientation
+                                                    .horizontal,
+                                            margin: controller.dividerMargin,
+                                            radius: controller.dividerRadius,
+                                            thickness:
+                                                controller.dividerThickness,
+                                          ),
+                                        )
+                                      ],
+                                    ));
+                              }),
+                            ),
+                            Visibility(
+                              visible: controller.position ==
+                                  WizardStepperPosition.top,
+                              child: Expanded(child: controller._currentStep!),
+                            )
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Visibility(
+                              visible: controller.position ==
+                                  WizardStepperPosition.right,
+                              child: Expanded(child: controller._currentStep!),
+                            ),
+                            Column(
+                              children: List.generate(controller._steps.length,
+                                  (index) {
+                                final lineColor = _generateLineColor(index);
+                                final circleColor = _generateCircleColor(index);
+      
+                                return Expanded(
+                                    flex: index < controller._steps.length - 1
+                                        ? 1
+                                        : 0,
+                                    child: Column(children: [
                                       WizardStepperHotSpot(
                                         step: controller._steps[index],
                                         color: circleColor,
@@ -181,117 +256,67 @@ class WizardStepperState extends State<WizardStepper> {
                                         },
                                       ),
                                       Visibility(
-                                        visible: index <
-                                            controller._steps.length - 1,
+                                        visible:
+                                            index < controller._steps.length - 1,
                                         child: WizardStepperDivider(
                                           color: lineColor,
                                           direction:
                                               WizardStepperDividerOrientation
-                                                  .horizontal,
+                                                  .vertical,
                                           margin: controller.dividerMargin,
                                           radius: controller.dividerRadius,
-                                          thickness:
-                                              controller.dividerThickness,
+                                          thickness: controller.dividerThickness,
                                         ),
                                       )
-                                    ],
-                                  ));
-                            }),
-                          ),
-                          Visibility(
-                            visible: controller.position ==
-                                WizardStepperPosition.top,
-                            child: Expanded(child: controller._currentStep!),
-                          )
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          Visibility(
-                            visible: controller.position ==
-                                WizardStepperPosition.right,
-                            child: Expanded(child: controller._currentStep!),
-                          ),
-                          Column(
-                            children: List.generate(controller._steps.length,
-                                (index) {
-                              final lineColor = _generateLineColor(index);
-                              final circleColor = _generateCircleColor(index);
-
-                              return Expanded(
-                                  flex: index < controller._steps.length - 1
-                                      ? 1
-                                      : 0,
-                                  child: Column(children: [
-                                    WizardStepperHotSpot(
-                                      step: controller._steps[index],
-                                      color: circleColor,
-                                      controller: controller,
-                                      onStepEvent: () {
-                                        controller.onStepSelected(index);
-                                      },
-                                    ),
-                                    Visibility(
-                                      visible:
-                                          index < controller._steps.length - 1,
-                                      child: WizardStepperDivider(
-                                        color: lineColor,
-                                        direction:
-                                            WizardStepperDividerOrientation
-                                                .vertical,
-                                        margin: controller.dividerMargin,
-                                        radius: controller.dividerRadius,
-                                        thickness: controller.dividerThickness,
-                                      ),
-                                    )
-                                  ]));
-                            }),
-                          ),
-                          Visibility(
-                              visible: controller.position ==
-                                  WizardStepperPosition.left,
-                              child: Expanded(child: controller._currentStep!))
-                        ],
-                      )),
-
-            // show navigation?
-            Visibility(
-              visible: controller.showNavigationButtons,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                      style: controller.previousButtonStyle,
-                      onPressed: _enablePreviousButton
-                          ? () {
-                              controller.moveToPreviousStep();
-                            }
-                          : null,
-                      child: Text(controller.previousButtonLabel)),
-                  TextButton(
-                      style: controller.nextButtonStyle,
-                      onPressed: _enableNextButton
-                          ? () {
-                              if (controller.allStepsCompleted() &&
-                                  controller.isLastStep()) {
-                                controller.moveToLastStep();
-                              } else {
-                                controller.moveToNextStep();
+                                    ]));
+                              }),
+                            ),
+                            Visibility(
+                                visible: controller.position ==
+                                    WizardStepperPosition.left,
+                                child: Expanded(child: controller._currentStep!))
+                          ],
+                        )),
+      
+              // show navigation?
+              Visibility(
+                visible: controller.showNavigationButtons,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                        style: controller.previousButtonStyle,
+                        onPressed: _enablePreviousButton
+                            ? () {
+                                controller.moveToPreviousStep();
                               }
-                            }
-                          : null,
-                      child: Text(
-                        controller.allStepsCompleted() &&
-                                controller.isLastStep()
-                            ? controller.finalStepButtonLabel
-                            : controller.nextButtonLabel,
-                      )),
-                ],
-              ),
-            )
-          ],
-        );
-      },
+                            : null,
+                        child: Text(controller.previousButtonLabel)),
+                    TextButton(
+                        style: controller.nextButtonStyle,
+                        onPressed: _enableNextButton
+                            ? () {
+                                if (controller.allStepsCompleted() &&
+                                    controller.isLastStep()) {
+                                  controller.moveToLastStep();
+                                } else {
+                                  controller.moveToNextStep();
+                                }
+                              }
+                            : null,
+                        child: Text(
+                          controller.allStepsCompleted() &&
+                                  controller.isLastStep()
+                              ? controller.finalStepButtonLabel
+                              : controller.nextButtonLabel,
+                        )),
+                  ],
+                ),
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -424,10 +449,9 @@ class WizardStepperHotSpot extends StatelessWidget {
                                       height: controller.stepSize,
                                       child: Text('${step.stepNumber + 1}',
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color:
-                                                  controller.stepNumberColor)),
+                                          style: controller.stepLabelStyle.copyWith(
+                                            color: controller.theme!.stepNumberColor),
+                                          ),
                                     )
                                   : null)),
             ],
@@ -464,6 +488,11 @@ class WizardStepperController extends ChangeNotifier {
   Color currentStepColor;
   Color stepNumberColor;
 
+  // themes
+  WizardStepperThemeData? lightTheme;
+  WizardStepperThemeData? darkTheme;
+  WizardStepperThemeData? activeTheme;
+
   // flags
   bool showStepDividers;
   bool showStepNumber;
@@ -486,6 +515,7 @@ class WizardStepperController extends ChangeNotifier {
   double stepBackgroundSize;
   BoxShape stepShape;
   double stepIconSize;
+  TextStyle stepLabelStyle;
 
   // enums
   WizardStepperOrientation orientation;
@@ -516,6 +546,10 @@ class WizardStepperController extends ChangeNotifier {
     this.stepNumberColor = Colors.white,
     this.dividerColor = Colors.grey,
 
+    // themes
+    this.lightTheme,
+    this.darkTheme,
+
     // values
     this.stepSize = 20,
     this.dividerThickness = 6,
@@ -526,6 +560,7 @@ class WizardStepperController extends ChangeNotifier {
     this.stepShape = BoxShape.circle,
     this.stepIconSize = 20,
     this.stepBorderRadius = 20,
+    this.stepLabelStyle = const TextStyle(fontSize: 12),
 
     // flags
     this.showStepDividers = true,
@@ -810,6 +845,14 @@ class WizardStepperController extends ChangeNotifier {
     return _stepWidgets;
   }
 
+  WizardStepperThemeData? get theme {
+    return activeTheme;
+  }
+
+  set theme(WizardStepperThemeData? value) {
+    activeTheme = value;
+  }
+
   /// disposes of any resources
   @override
   void dispose() {
@@ -847,5 +890,67 @@ class WizardStepperEvent {
   @override
   String toString() {
     return steps.map((s) => s.toString()).join(',');
+  }
+}
+
+/// Encapsulates the theme data for the wizard stepper as far as colors
+class WizardStepperThemeData {
+  final Color stepColor;
+  final Color dividerColor;
+  final Color completedStepColor;
+  final Color currentStepColor;
+  final Color stepNumberColor;
+
+  WizardStepperThemeData({
+    required this.stepColor,
+    required this.dividerColor,
+    required this.completedStepColor,
+    required this.currentStepColor,
+    required this.stepNumberColor,
+  });
+}
+
+/// Provides an inherited widget at the root of the wizard stepper hierarchy
+/// in order to provide the theming in a top-down approach
+class WizardStepperInheritedTheme extends InheritedWidget {
+  final WizardStepperThemeData data;
+  const WizardStepperInheritedTheme({
+    required this.data,
+    required super.child,
+    super.key,
+  });
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) =>     
+      oldWidget != this;
+}
+
+/// Wraps the theme around the wizard stepper
+class WizardStepperTheme extends StatelessWidget {
+  final WizardStepperThemeData light;
+  final WizardStepperThemeData dark;
+  final Widget child;
+
+  const WizardStepperTheme({
+    super.key,
+    required this.light,
+    required this.dark,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final data = brightness == Brightness.light ? light : dark;
+     
+    return WizardStepperInheritedTheme(
+      data: data,
+      child: child,
+    );
+  }
+  
+  static WizardStepperThemeData of(BuildContext context){
+    return context
+        .dependOnInheritedWidgetOfExactType<WizardStepperInheritedTheme>()!
+        .data;
   }
 }
