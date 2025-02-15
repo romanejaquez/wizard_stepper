@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.0.8
+
+- Fixed sample implementation screenshots.
+
 ## 0.0.7
 
 - Added pagination capabilities via the ```usePageView``` property, which uses a ```PageView`` widget under the hood.

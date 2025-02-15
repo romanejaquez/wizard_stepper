@@ -13,20 +13,20 @@ A simple, customizable and easy-to-use wizard stepper widget for Flutter. Guide 
 
 ### Basic Wizard
 
-![Basic Wizard](./screenshots/basicwizard.gif)
+![Basic Wizard](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/basicwizard.gif)
 
 ### Wizard with Icons
 
-![Basic Wizard](./screenshots/wizardwithicons.gif)
+![Basic Wizard](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/wizardwithicons.gif)
 
 ### Wizard with *Animated Icons
 *(requires your own custom animations)
 
-![Basic Wizard](./screenshots/withanimatedicons.gif)
+![Basic Wizard](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/withanimatedicons.gif)
 
 ### Wizard with Custon Buttons
 
-![Basic Wizard](./screenshots/withcustombuttons.gif)
+![Basic Wizard](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/withcustombuttons.gif)
 
 ## Installation
 
@@ -284,14 +284,14 @@ controller = WizardStepperController(
 > [!NOTE]
 > If no theme is provided, a theme will be applied using the default colors defined in the **Colors** section, or if a theme is created with just a few color values assigned, it will populate the rest of the colors from the default ones. If a theme is assigned and the platform's theme is switched programmatically, the wizard will rebuild accordingly and display the appropriate theme.
 
-![Wizard Theming](./screenshots/theming.gif)
+![Wizard Theming](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/theming.gif)
 
 ### PageView capabilities
 - ***usePageView***: set this property in the ```WizardStepperController``` controller if you want the pages to have a page view behavior. The wizard stepper creates a ```PageView``` widget under the hood and controls it for you. Defaults to ```false```.
 - ***pagingDuration***: if ```usePageView``` is set to true, this property is used to control the duration of the ```PageView``` widget page transitions. Defaults to ```Duration(milliseconds: 300)```.
 - ***paginationDirection***:  if ```usePageView``` is set to true, this property is used to control the scrolling direction of the ```PageView``` widget pages. If not set at all, it will use the default ```WizardStepperOrientation``` value and match the orientation of the wizard step navigation.
 
-![PageView](./screenshots/pageview.gif)
+![PageView](https://raw.githubusercontent.com/romanejaquez/wizard_stepper/main/screenshots/pageview.gif)
 
 ### Values
 - ***stepSize***: sets the size of the wizard step indicator. Defaults to ```20```.
