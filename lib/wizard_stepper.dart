@@ -613,10 +613,9 @@ class WizardStepperController extends ChangeNotifier {
   void initialize(List<WizardStep> wizardSteps,
       {List<IconData> wizardStepIcons = const [],
       List<Widget> wizardStepWidgets = const []}) {
-    
     stepChangesController = StreamController<WizardStepperEvent>.broadcast();
     stepChanges = stepChangesController.stream;
-    
+
     _steps = wizardSteps;
     _currentStepIndex = 0;
 
@@ -726,7 +725,8 @@ class WizardStepperController extends ChangeNotifier {
 
   /// Returns whether the wizard can be moved to the last step
   bool canMoveToLastStep() {
-    return _currentStep != null && _currentStep!.stepNumber <= _steps.length - 1;
+    return _currentStep != null &&
+        _currentStep!.stepNumber <= _steps.length - 1;
   }
 
   /// Returns whether the wizard is at the first step
@@ -744,7 +744,7 @@ class WizardStepperController extends ChangeNotifier {
   void moveToNextStep() {
     if (canMoveToNextStep()) {
       _currentStepIndex++;
-    
+
       _setCurrentStep();
 
       if (onMovedToNext != null) {
@@ -759,7 +759,7 @@ class WizardStepperController extends ChangeNotifier {
     if (canMoveToPreviousStep()) {
       _currentStepIndex--;
 
-       _setCurrentStep();
+      _setCurrentStep();
 
       if (onMovedToPrevious != null) {
         onMovedToPrevious!();
