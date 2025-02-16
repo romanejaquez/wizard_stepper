@@ -19,8 +19,7 @@ class TestStep extends StatefulWidget with WizardStep {
   State<TestStep> createState() => _TestStepState();
 }
 
-class _TestStepState extends State<TestStep>  {
-
+class _TestStepState extends State<TestStep> {
   bool isComplete = false;
 
   @override
@@ -44,9 +43,7 @@ class _TestStepState extends State<TestStep>  {
 }
 
 void main() {
-
   group('WizardStepperController', () {
-
     late WizardStepperController controller;
     late List<WizardStep> steps;
 
@@ -222,7 +219,8 @@ void main() {
       expect(controller.numberOfSteps, 0);
     });
 
-    test('switchOrientation throws exception with invalid horizontal position', () {
+    test('switchOrientation throws exception with invalid horizontal position',
+        () {
       final controller = WizardStepperController(
           orientation: WizardStepperOrientation.vertical,
           position: WizardStepperPosition.left);
@@ -238,7 +236,8 @@ void main() {
           throwsA(isA<Exception>()));
     });
 
-    test('switchOrientation throws exception with invalid vertical position', () {
+    test('switchOrientation throws exception with invalid vertical position',
+        () {
       final controller = WizardStepperController(
           orientation: WizardStepperOrientation.horizontal,
           position: WizardStepperPosition.top);
@@ -256,8 +255,7 @@ void main() {
     test('Throws exception with steps but no icons/widgets', () {
       final step1 = TestStep();
       final step2 = TestStep();
-      expect(
-          () => WizardStepperController().initialize([step1, step2]),
+      expect(() => WizardStepperController().initialize([step1, step2]),
           returnsNormally);
     });
 
@@ -299,9 +297,9 @@ void main() {
 
       expect(
           () => WizardStepperController().initialize(
-            [step1],
-            wizardStepWidgets: [Container(), Container()],
-          ),
+                [step1],
+                wizardStepWidgets: [Container(), Container()],
+              ),
           throwsException);
     });
 
@@ -312,7 +310,6 @@ void main() {
       controller.initialize([step1, step2]);
       controller.currentStep!.completeStep(true);
 
-
       expect(controller.canMoveToNextStep(), true);
       controller.moveToNextStep();
       expect(controller.currentStepIndex, 1);
@@ -320,7 +317,6 @@ void main() {
       expect(controller.canMoveToPreviousStep(), true);
       controller.moveToPreviousStep();
       expect(controller.currentStepIndex, 0);
-
 
       controller.currentStep!.completeStep(true);
       controller.moveToNextStep();
@@ -341,11 +337,12 @@ void main() {
 
       controller.steps.first.completeStep(true); //mark the first step complete
 
-      controller.onStepSelected(0); //this should work as it is now marked complete
+      controller
+          .onStepSelected(0); //this should work as it is now marked complete
       expect(controller.currentStepIndex, 0);
 
-
-      controller.onStepSelected(1); //this will not work because the second step is not complete
+      controller.onStepSelected(
+          1); //this will not work because the second step is not complete
       expect(controller.currentStepIndex, 0);
     });
 
@@ -369,7 +366,7 @@ void main() {
       expect(testStep.isComplete, false);
       expect(testStep.isCompleteNotifier.value, false);
     });
-    
+
     testWidgets('PageView Navigation', (WidgetTester tester) async {
       final step1 = TestStep();
       final step2 = TestStep();
@@ -381,7 +378,6 @@ void main() {
           steps: [step1, step2],
         ),
       ));
-
 
       controller.currentStep!.completeStep(true);
       controller.moveToNextStep();
@@ -396,5 +392,3 @@ void main() {
     });
   });
 }
-
-

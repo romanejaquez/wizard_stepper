@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:wizard_stepper/wizard_stepper.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
+  runApp(MaterialApp(
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      debugShowCheckedModeBanner: false, 
-      home: BasicWizard()
-    ));
+      debugShowCheckedModeBanner: false,
+      home: BasicWizard()));
 }
 
 class BasicWizard extends StatefulWidget {
@@ -26,12 +24,12 @@ class BasicWizardState extends State<BasicWizard> {
   void initState() {
     super.initState();
 
-    controller = WizardStepperController(     
-      showNavigationButtons: true,
-      onMovedToLastStep: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => FinalPage()));
-      });
+    controller = WizardStepperController(
+        showNavigationButtons: true,
+        onMovedToLastStep: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => FinalPage()));
+        });
   }
 
   @override
@@ -68,4 +66,3 @@ class BasicWizardState extends State<BasicWizard> {
     );
   }
 }
-

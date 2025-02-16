@@ -140,22 +140,23 @@ class WizardStepperState extends State<WizardStepper> {
 
   @override
   Widget build(BuildContext context) {
+    final lightTheme = controller.lightTheme ??
+        WizardStepperThemeData(
+          completedStepColor: controller.completedStepColor,
+          currentStepColor: controller.currentStepColor,
+          stepColor: controller.stepColor,
+          stepNumberColor: controller.stepNumberColor,
+          dividerColor: controller.dividerColor,
+        );
 
-    final lightTheme = controller.lightTheme ?? WizardStepperThemeData(
-      completedStepColor: controller.completedStepColor,
-      currentStepColor: controller.currentStepColor,
-      stepColor: controller.stepColor,
-      stepNumberColor: controller.stepNumberColor,
-      dividerColor: controller.dividerColor,
-    );
-
-    final darkTheme = controller.darkTheme ?? WizardStepperThemeData(
-      completedStepColor: controller.completedStepColor,
-      currentStepColor: controller.currentStepColor,
-      stepColor: controller.stepColor,
-      stepNumberColor: controller.stepNumberColor,
-      dividerColor: controller.dividerColor,
-    );
+    final darkTheme = controller.darkTheme ??
+        WizardStepperThemeData(
+          completedStepColor: controller.completedStepColor,
+          currentStepColor: controller.currentStepColor,
+          stepColor: controller.stepColor,
+          stepNumberColor: controller.stepNumberColor,
+          dividerColor: controller.dividerColor,
+        );
 
     return WizardStepperTheme(
       light: lightTheme,
@@ -163,14 +164,13 @@ class WizardStepperState extends State<WizardStepper> {
       child: ListenableBuilder(
         listenable: controller,
         builder: (context, child) {
-      
           final theme = WizardStepperTheme.of(context);
           controller.theme = theme;
-      
+
           _enablePreviousButton = controller.canMoveToPreviousStep();
           _enableNextButton =
               controller.canMoveToNextStep() || controller.allStepsCompleted();
-      
+
           return Column(
             children: [
               Expanded(
@@ -181,7 +181,8 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.bottom,
-                              child: WizardStepperViewport(controller: controller),
+                              child:
+                                  WizardStepperViewport(controller: controller),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -189,7 +190,7 @@ class WizardStepperState extends State<WizardStepper> {
                                   (index) {
                                 final lineColor = _generateLineColor(index);
                                 final circleColor = _generateCircleColor(index);
-      
+
                                 return Expanded(
                                     flex: index < controller._steps.length - 1
                                         ? 1
@@ -225,7 +226,8 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.top,
-                              child: WizardStepperViewport(controller: controller),
+                              child:
+                                  WizardStepperViewport(controller: controller),
                             )
                           ],
                         )
@@ -234,14 +236,15 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.right,
-                              child: WizardStepperViewport(controller: controller),
+                              child:
+                                  WizardStepperViewport(controller: controller),
                             ),
                             Column(
                               children: List.generate(controller._steps.length,
                                   (index) {
                                 final lineColor = _generateLineColor(index);
                                 final circleColor = _generateCircleColor(index);
-      
+
                                 return Expanded(
                                     flex: index < controller._steps.length - 1
                                         ? 1
@@ -256,8 +259,8 @@ class WizardStepperState extends State<WizardStepper> {
                                         },
                                       ),
                                       Visibility(
-                                        visible:
-                                            index < controller._steps.length - 1,
+                                        visible: index <
+                                            controller._steps.length - 1,
                                         child: WizardStepperDivider(
                                           color: lineColor,
                                           direction:
@@ -265,7 +268,8 @@ class WizardStepperState extends State<WizardStepper> {
                                                   .vertical,
                                           margin: controller.dividerMargin,
                                           radius: controller.dividerRadius,
-                                          thickness: controller.dividerThickness,
+                                          thickness:
+                                              controller.dividerThickness,
                                         ),
                                       )
                                     ]));
@@ -274,11 +278,12 @@ class WizardStepperState extends State<WizardStepper> {
                             Visibility(
                               visible: controller.position ==
                                   WizardStepperPosition.left,
-                              child: WizardStepperViewport(controller: controller),
+                              child:
+                                  WizardStepperViewport(controller: controller),
                             )
                           ],
                         )),
-      
+
               // show navigation?
               Visibility(
                 visible: controller.showNavigationButtons,
@@ -448,11 +453,14 @@ class WizardStepperHotSpot extends StatelessWidget {
                                       alignment: Alignment.center,
                                       width: controller.stepSize,
                                       height: controller.stepSize,
-                                      child: Text('${step.stepNumber + 1}',
-                                          textAlign: TextAlign.center,
-                                          style: controller.stepLabelStyle.copyWith(
-                                            color: controller.theme!.stepNumberColor),
-                                          ),
+                                      child: Text(
+                                        '${step.stepNumber + 1}',
+                                        textAlign: TextAlign.center,
+                                        style: controller.stepLabelStyle
+                                            .copyWith(
+                                                color: controller
+                                                    .theme!.stepNumberColor),
+                                      ),
                                     )
                                   : null)),
             ],
@@ -465,27 +473,26 @@ class WizardStepperHotSpot extends StatelessWidget {
 
 /// The widget that represents the viewport through which the step is visible.
 class WizardStepperViewport extends StatelessWidget {
-
   final WizardStepperController controller;
   const WizardStepperViewport({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: controller.usePageView && controller.pageController != null ?
-
-      PageView.builder(
-        scrollDirection: controller.paginationDirection ?? 
-          (controller.orientation == WizardStepperOrientation.horizontal ? Axis.horizontal : Axis.vertical),
-        physics: NeverScrollableScrollPhysics(),
-        controller: controller.pageController,
-        itemCount: controller.numberOfSteps,
-        itemBuilder:(context, index) {
-          return controller._steps[index];
-        },
-      )
-      :
-      controller._currentStep!,
+      child: controller.usePageView && controller.pageController != null
+          ? PageView.builder(
+              scrollDirection: controller.paginationDirection ??
+                  (controller.orientation == WizardStepperOrientation.horizontal
+                      ? Axis.horizontal
+                      : Axis.vertical),
+              physics: NeverScrollableScrollPhysics(),
+              controller: controller.pageController,
+              itemCount: controller.numberOfSteps,
+              itemBuilder: (context, index) {
+                return controller._steps[index];
+              },
+            )
+          : controller._currentStep!,
     );
   }
 }
@@ -607,7 +614,6 @@ class WizardStepperController extends ChangeNotifier {
     this.finalStepButtonLabel = 'Complete',
     this.previousButtonStyle,
     this.nextButtonStyle,
-
     this.usePageView = false,
     this.pagingDuration = const Duration(milliseconds: 350),
     this.paginationDirection,
@@ -686,7 +692,6 @@ class WizardStepperController extends ChangeNotifier {
   void initialize(List<WizardStep> wizardSteps,
       {List<IconData> wizardStepIcons = const [],
       List<Widget> wizardStepWidgets = const []}) {
-
     // initialize controllers
     stepChangesController = StreamController<WizardStepperEvent>.broadcast();
     stepChanges = stepChangesController.stream;
@@ -764,7 +769,8 @@ class WizardStepperController extends ChangeNotifier {
     _setCurrentStep();
 
     if (usePageView) {
-      pageController!.animateToPage(0, duration: pagingDuration, curve: Curves.easeInOut);
+      pageController!
+          .animateToPage(0, duration: pagingDuration, curve: Curves.easeInOut);
     }
 
     if (onWizardReset != null) {
@@ -785,7 +791,8 @@ class WizardStepperController extends ChangeNotifier {
       _resetCurrentStep();
 
       if (usePageView) {
-        pageController!.animateToPage(selectedStepIndex, duration: pagingDuration, curve: Curves.easeInOut);
+        pageController!.animateToPage(selectedStepIndex,
+            duration: pagingDuration, curve: Curves.easeInOut);
       }
 
       if (onSelectedStep != null) {
@@ -839,7 +846,8 @@ class WizardStepperController extends ChangeNotifier {
       _setCurrentStep();
 
       if (usePageView) {
-        pageController!.nextPage(duration: pagingDuration, curve: Curves.easeInOut);
+        pageController!
+            .nextPage(duration: pagingDuration, curve: Curves.easeInOut);
       }
 
       if (onMovedToNext != null) {
@@ -857,7 +865,8 @@ class WizardStepperController extends ChangeNotifier {
       _setCurrentStep();
 
       if (usePageView) {
-        pageController!.previousPage(duration: pagingDuration, curve: Curves.easeInOut);
+        pageController!
+            .previousPage(duration: pagingDuration, curve: Curves.easeInOut);
       }
 
       if (onMovedToPrevious != null) {
@@ -988,7 +997,7 @@ class WizardStepperInheritedTheme extends InheritedWidget {
     super.key,
   });
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) =>     
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) =>
       oldWidget != this;
 }
 
@@ -1009,14 +1018,14 @@ class WizardStepperTheme extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = MediaQuery.of(context).platformBrightness;
     final data = brightness == Brightness.light ? light : dark;
-     
+
     return WizardStepperInheritedTheme(
       data: data,
       child: child,
     );
   }
-  
-  static WizardStepperThemeData of(BuildContext context){
+
+  static WizardStepperThemeData of(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<WizardStepperInheritedTheme>()!
         .data;
