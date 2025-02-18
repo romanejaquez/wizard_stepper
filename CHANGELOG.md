@@ -5,7 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.0.10
 
-- Fixed formatting.
+- Add pub and license badges.
 
 ## 0.0.9
 
