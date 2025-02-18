@@ -1,3 +1,5 @@
+[![Pub Version](https://img.shields.io/pub/v/wizard_stepper?label=wizard_stepper&labelColor=333940&logo=dart)](https://pub.dev/packages/wizard_stepper) [![License](https://img.shields.io/badge/License-MIT%20-blue.svg)](https://opensource.org/license/MIT)
+
 # Wizard Stepper
 
 A simple, customizable and easy-to-use wizard stepper widget for Flutter. Guide users through multi-step processes with clear progress indication and control.
